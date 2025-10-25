@@ -29,10 +29,11 @@
 }
 
 .text {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: normal;
   line-height: 1.25;
   color: #c4c5c5;
+  text-align: center;
 }
 
 .signinWrapper {

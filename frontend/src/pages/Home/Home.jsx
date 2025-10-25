@@ -16,7 +16,7 @@ function Home() {
 
   const startRegister = function() {
     console.log("startRegister...");
-    navigate("/register");
+    navigate("/authenticate");
   }
 
 
@@ -38,11 +38,11 @@ function Home() {
           officiis laudantium accusamus minus at dolor?
         </p>
         <div>
-          <Button btnLabel="Get you username" handleOnClick={startRegister} />
+          <Button btnLabel="Let's Go" handleOnClick={startRegister} />
         </div>
         <div className={styles.signinWrapper}>
           <span className={styles.hasInvite}>Have an invite text?</span>
-          <Link to={"/login"} style={signInLinkStyle}> Sign in</Link>
+          {/* <Link to={"/login"} style={signInLinkStyle}> Sign in</Link> */}
         </div>
       </Card>
     </div>

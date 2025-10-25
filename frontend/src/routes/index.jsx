@@ -5,28 +5,42 @@ import PageNotFound from "./PageNotFound";
 import Home from "../pages/Home/Home";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
+import Authenticate from "../pages/Authenticate/Authenticate";
+import { protectedLoader } from "./loaders/protectedLoader";
+import { publicLoader } from "./loaders/publicLoader";
+import Activate from "../pages/Activate/Activate";
+import { semiProtectedLoader } from "./loaders/semiProtectedLoader";
+import Rooms from "../pages/Rooms/Rooms";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
-    errorElement: <GlobalErrorPage />,
+    Component: App,
+    // ErrorBoundary: GlobalErrorPage,
     children: [
       {
         index: true,
-        element: <Home/>
+        Component: Home,
+        loader: publicLoader
       },
       {
-        path: "/register",
-        element: <Register/>
+        path: "authenticate",
+        Component: Authenticate,
+        loader: publicLoader
       },
       {
-        path: "/login",
-        element: <Login/>
+        path: "activate",
+        Component: Activate,
+        loader: semiProtectedLoader
+      },
+      {
+        path: "rooms",
+        Component: Rooms,
+        loader: protectedLoader
       },
       {
         path: "*",
-        element: <PageNotFound />
+        Component: PageNotFound 
       }
     ]
   },
