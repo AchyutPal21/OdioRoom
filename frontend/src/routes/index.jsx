@@ -3,8 +3,6 @@ import App from "../App";
 import GlobalErrorPage from "./GlobalErrorPage";
 import PageNotFound from "./PageNotFound";
 import Home from "../pages/Home/Home";
-import Register from "../pages/Register/Register";
-import Login from "../pages/Login/Login";
 import Authenticate from "../pages/Authenticate/Authenticate";
 import { protectedLoader } from "./loaders/protectedLoader";
 import { publicLoader } from "./loaders/publicLoader";
