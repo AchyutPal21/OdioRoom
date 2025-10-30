@@ -1,5 +1,5 @@
 import { NODE_ENV } from "../secrets.js";
-import { sendOtpUtil, verifyOtpUtil } from "../utils/verifyService.js";
+import { sendOtpUtil, verifyOtpUtil } from "../utils/otpService.js";
 
 class AuthController {
   constructor() {

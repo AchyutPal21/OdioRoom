@@ -1,5 +1,5 @@
 import twilio from "twilio";
-import OtpService from "./OtpService.js";
+import {OtpService} from "./OtpService.js";
 import {
   TWILIO_ACCOUNT_SID,
   TWILIO_AUTH_TOKEN,
@@ -25,7 +25,6 @@ class SmsOtpService extends OtpService {
         to: recipient,
       });
 
-      console.log("SMS OTP sent to:", recipient, "SID:", message.sid);
     } catch (error) {
       console.error("Error sending SMS OTP:", error);
       throw new Error("Failed to send OTP SMS");

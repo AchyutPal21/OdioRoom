@@ -8,11 +8,11 @@ class OtpService {
     if (new.target === OtpService) {
       throw new Error("Cannot instantiate abstract class OtpService directly");
     }
-    this.#ttl = ttl;
+    this.#ttl = Date.now() + ttl;
   }
 
   getTtl() {
-    return Date.now() + this.#ttl;
+    return this.#ttl;
   }
 
   async generateOtp() {
@@ -27,10 +27,8 @@ class OtpService {
 
   async hashOtp(recipient, otp) {
     try {
-      const hashData = `${recipient}.${otp}.${this.#ttl}`;
-      const hash = crypto.createHmac(OTP_ALGORITHM, OTP_SECRET)
-        .update(hashData)
-        .digest("hex");
+      const hashData = `${recipient}.${otp}.${this.getTtl()}`;
+      const hash = crypto.createHmac(OTP_ALGORITHM, OTP_SECRET).update(hashData).digest("hex");
       return hash;
     } catch (error) {
       throw new Error("Failed to hash OTP: " + error.message);
@@ -51,13 +49,7 @@ class OtpService {
     }
 
     const toHash = `${recipient}.${otp}.${expiresAt}`;
-    const hash = crypto.createHmac(OTP_ALGORITHM, OTP_SECRET)
-      .update(toHash)
-      .digest("hex");
-
-    if (!hash) {
-      throw new Error("Failed to validate OTP");
-    }
+    const hash = crypto.createHmac(OTP_ALGORITHM, OTP_SECRET).update(toHash).digest("hex");
 
     return hash === hashOtp;
   }
