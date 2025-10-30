@@ -31,6 +31,15 @@ class Database {
   getSequelize() {
     return this.#sequelize;
   }
+
+  async disconnect() {
+    try {
+      await this.#sequelize.close();
+      console.log("Database connection closed");
+    } catch (error) {
+      console.error("Error closing the database connection:", error);
+    }
+  }
 }
 
 export default Database;

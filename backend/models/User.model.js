@@ -33,4 +33,4 @@ User.init({
   timestamps: true,
 });
 
-export {User}
+export { User };
