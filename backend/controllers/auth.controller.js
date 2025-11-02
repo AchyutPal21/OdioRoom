@@ -1,5 +1,8 @@
 import { NODE_ENV } from "../secrets.js";
+import { jwtTokenService } from "../services/jwt/JwtTokenService.js";
+import { userService } from "../services/user/UserService.js";
 import { sendOtpUtil, verifyOtpUtil } from "../utils/otpService.js";
+import { getAccessPayload, getRefreshPayload } from "../utils/userTokenPayload.js";
 
 class AuthController {
   constructor() {
@@ -54,7 +57,7 @@ class AuthController {
   }
 
   async verifyOtpController(req, res) {
-    const { otp, recipient, serviceType } = req.body;
+    const { otp, recipient, serviceType, countryCode } = req.body;
 
     // Validations
     if (!otp || !recipient || !serviceType) {
@@ -91,9 +94,48 @@ class AuthController {
       // Clear the cookie after successful verification
       res.clearCookie("otp_hash");
 
+
+      // validate user and register
+      let user = null;
+      try {
+        if (serviceType === "phone") {
+          user = await userService.getUserByFields({ phone: recipient });
+        } else {
+          user = await userService.getUserByFields({ email: recipient });
+        }
+
+        // Register the user is not exists
+        if (!user) {
+          const prepareData = {};
+          if (serviceType === "phone") {
+            prepareData.phone = recipient.trim().slice(recipient.length - 10, recipient.length);
+            prepareData.countryCode = countryCode;
+          } else {
+            prepareData.email = recipient;
+          }
+
+          user = await userService.createUser(prepareData);
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(400).json({ status: false, message: "Failed to register" });
+      }
+
+      // Generate auth tokens and send
+      const accessToken = await jwtTokenService.generateAccessToken(getAccessPayload(user));
+      const refreshToken = await jwtTokenService.generateRefreshToken(getRefreshPayload(user));
+
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: NODE_ENV === "PROD",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // expires in 7days
+      });
+
       return res.status(200).json({
         status: true,
         message: "OTP verified successfully",
+        token: accessToken
       });
     } catch (error) {
       console.error("Error verifying OTP:", error);

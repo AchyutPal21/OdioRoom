@@ -1,7 +1,7 @@
-import {NODE_ENV} from "../secrets.js";
+import { NODE_ENV } from "../secrets.js";
 
 export const globalErrorHandler = (err, req, res, next) => {
-  
+
   if ("DEV" === NODE_ENV) {
     console.error(`ERROR from globalHandler`, err);
   }

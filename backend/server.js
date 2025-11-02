@@ -1,47 +1,49 @@
 import { app } from "./app.js";
-import { PORT, HOST, NODE_ENV } from "./secrets.js";
+import { PORT, NODE_ENV, DB_SYNC } from "./secrets.js";
 import { databaseInstance } from "./config/db/index.js";
 
-
-(async () => {
+const startServer = async () => {
   try {
-    // 1 Connect to DB
     await databaseInstance.connect();
 
-    // 2 Sync models (only in DEV or staging, not recommended in PROD)
-    if (NODE_ENV === "DEV") {
+    if (NODE_ENV === "DEV" && DB_SYNC === "true") {
       await databaseInstance.getSequelize().sync({ alter: true });
-      console.log("Database models synchronized");
+      console.log("Models synchronized (DEV only)");
+    } else {
+      console.log("Skipping model sync in production");
     }
 
-    // 3 Start the server
-    const server = app.listen(PORT, HOST, () => {
-      console.log(`Server running on http://${HOST}:${PORT} [${NODE_ENV}]`);
+    const server = app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} [${NODE_ENV}]`);
     });
 
-    // 4 Handle server errors
-    server.on("error", (error) => {
-      console.error(`Server error: ${error.message}`);
-      if (NODE_ENV === "DEV") console.error(error.stack);
+    const shutdown = async () => {
+      console.log("⚡ Gracefully shutting down...");
+      server.close(async () => {
+        console.log("HTTP server closed");
+        await databaseInstance.disconnect();
+        console.log("Database disconnected");
+        process.exit(0);
+      });
+    };
+
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+
+    process.on("uncaughtException", (err) => {
+      console.error("Uncaught Exception:", err);
+      process.exit(1);
     });
 
-    // 5 Graceful shutdown
-    process.on("SIGINT", async () => {
-      console.log("⚡ SIGINT received. Closing server...");
-      await databaseInstance.disconnect();
-      server.close(() => console.log("Server closed"));
-      process.exit(0);
-    });
-
-    process.on("SIGTERM", async () => {
-      console.log("⚡ SIGTERM received. Closing server...");
-      await databaseInstance.disconnect();
-      server.close(() => console.log("Server closed"));
-      process.exit(0);
+    process.on("unhandledRejection", (reason) => {
+      console.error("Unhandled Rejection:", reason);
+      process.exit(1);
     });
 
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);
   }
-})();
+};
+
+startServer();

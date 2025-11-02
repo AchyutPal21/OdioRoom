@@ -21,7 +21,7 @@ User.init({
     type: DataTypes.STRING(10),
     allowNull: true
   },
-  isActive: {
+  isActivated: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false

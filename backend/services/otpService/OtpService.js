@@ -1,14 +1,14 @@
 import crypto from "crypto";
-import { OTP_SECRET, OTP_ALGORITHM } from "../../secrets.js";
+import { OTP_SECRET, OTP_ALGORITHM, OTP_TTL } from "../../secrets.js";
 
 class OtpService {
   #ttl;
 
-  constructor(ttl = 5 * 60 * 1000) { // default 5 mins
+  constructor() {
     if (new.target === OtpService) {
       throw new Error("Cannot instantiate abstract class OtpService directly");
     }
-    this.#ttl = Date.now() + ttl;
+    this.#ttl = Date.now() + OTP_TTL;
   }
 
   getTtl() {

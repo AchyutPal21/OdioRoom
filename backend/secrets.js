@@ -1,3 +1,4 @@
+import ms from "ms";
 import { config } from "dotenv";
 config();
 
@@ -5,6 +6,7 @@ config();
 const PORT = parseInt(process.env.PORT) || 3000;
 const NODE_ENV = process.env.NODE_ENV || "DEV";
 const HOST = process.env.HOST || "localhost";
+const DB_SYNC = process.env.DB_SYNC || "false";
 
 // CORS
 const ALLOWED_CORS = process.env.ALLOWED_CORS ? process.env.ALLOWED_CORS.split(",") : [];
@@ -14,7 +16,7 @@ const ALLOWED_CORS = process.env.ALLOWED_CORS ? process.env.ALLOWED_CORS.split("
 // OTP
 const OTP_ALGORITHM = process.env.OTP_ALGORITHM;
 const OTP_SECRET = process.env.OTP_SECRET;
-const OTP_TTL = process.env.OTP_TTL;
+const OTP_TTL = ms(process.env.OTP_TTL);
 // Twilio
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -33,10 +35,17 @@ const DB_HOST = process.env.DB_HOST;
 const DB_DIALECT = process.env.DB_DIALECT;
 const DB_PORT = process.env.DB_PORT;
 
+// JWT
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const ACCESS_TOKEN_TTL = ms(process.env.ACCESS_TOKEN_TTL);
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const REFRESH_TOKEN_TTL = ms(process.env.REFRESH_TOKEN_TTL);
+
 export {
   PORT,
   NODE_ENV,
   HOST,
+  DB_SYNC,
   ALLOWED_CORS,
   OTP_ALGORITHM,
   OTP_SECRET,
@@ -53,5 +62,9 @@ export {
   DB_PASS,
   DB_HOST,
   DB_DIALECT,
-  DB_PORT
+  DB_PORT,
+  ACCESS_TOKEN_SECRET,
+  ACCESS_TOKEN_TTL,
+  REFRESH_TOKEN_SECRET,
+  REFRESH_TOKEN_TTL
 };
