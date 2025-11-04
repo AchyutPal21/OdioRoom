@@ -5,14 +5,26 @@ import Card from "../../../../components/shared/Card/Card";
 import styles from "../StepPhoneEmail.module.css";
 import TextInput from "../../../../components/shared/TextInput/TextInput";
 
-const EmailVerification = ({onNextStep}) => {
-  
+const EmailVerification = ({ onSubmitInput }) => {
+
   const [emailId, setEmailId] = useState("");
-  
+
   function handleOnChangeInput(event) {
     let value = event.target.value;
     value = value.trim();
     setEmailId(value);
+  }
+
+  function handleOnSubmit() {
+    // server request
+    const payload = {
+      recipient: emailId,
+      serviceType: "email",
+      countryCode: ""
+    };
+
+    // we can make this to show loading/disable the button
+    onSubmitInput(payload);
   }
 
 
@@ -34,7 +46,7 @@ const EmailVerification = ({onNextStep}) => {
         <div className={styles.actionButtonWrap}>
           <Button
             btnLabel="Next"
-            handleOnClick={onNextStep}
+            handleOnClick={handleOnSubmit}
           />
         </div>
         <p className={styles.bottomParagraph}>

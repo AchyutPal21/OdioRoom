@@ -1,6 +1,9 @@
-POST "http://localhost:3000/api/v1/auth/send-otp" HTTP/1.1
+POST /api/v1/auth/send-otp HTTP/1.1
+Host: localhost:3000
 Content-Type: application/json
+Content-Length: 60
 
 {
-  "phone": "+911234907878"
+  "recipient": "user@mail.com",
+  "serviceType": "email"
 }

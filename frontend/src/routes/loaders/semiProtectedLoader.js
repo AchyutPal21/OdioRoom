@@ -1,16 +1,18 @@
+import { useSelector } from "react-redux";
 import { redirect } from "react-router";
 import { getToken } from "../../../utils/auth";
 
 
 export async function semiProtectedLoader() {
-  const token = getToken();
+  const {isAuthenticated, user} = useSelector((state) => state.auth);
 
-  if (!token) throw redirect("/");
 
-  const user = { username: "johndoe@3", profilePicture: "profileimage.com/user1" };
-  const hasProfileDetails = user.username && user.profilePicture;
+  if (!isAuthenticated) throw redirect("/");
 
-  if (!hasProfileDetails) {
+  // const user = { username: "johndoe@3", profilePicture: "profileimage.com/user1" };
+  // const hasProfileDetails = user.username && user.profilePicture;
+
+  if (!user || !user.isActivated) {
     // Let them stay to complete details
     return null;
   }

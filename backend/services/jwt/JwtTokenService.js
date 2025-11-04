@@ -30,8 +30,20 @@ class JwtTokenService {
     }
   }
 
-  async validateToken() {
+  async verifyAccessToken(token) {
+    try {
+      return jwt.verify(token, ACCESS_TOKEN_SECRET);
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async verifyRefreshToken(token) {
+    try {
+      return jwt.verify(token, REFRESH_TOKEN_SECRET);
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

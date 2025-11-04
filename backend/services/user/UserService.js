@@ -1,3 +1,4 @@
+import { UserDTO } from "../../dto/UserDTO.js";
 import { User } from "../../models/User.model.js";
 
 class UserService {
@@ -6,7 +7,7 @@ class UserService {
       throw new Error("User cannot be created without any fields");
     }
     const user = await User.create(payload);
-    return user.get({ plain: true });
+    return new UserDTO(user.get({ plain: true }));
   }
 
   async getAllUsers(attributes = null) {
@@ -14,7 +15,7 @@ class UserService {
       attributes: attributes || undefined, // use all if not provided
       raw: true,
     });
-    return users;
+    return users.map((user) => new UserDTO(user));
   }
 
   async getUserById(id, attributes = null) {
@@ -24,7 +25,7 @@ class UserService {
       raw: true,
     });
     if (!user) throw new Error("User not found");
-    return user;
+    return new UserDTO(user);
   }
 
   async getUserByFields(filter = {}, attributes = []) {
@@ -37,8 +38,11 @@ class UserService {
       attributes: attributes.length ? attributes : undefined,
       raw: true,
     });
+    console.log(user);
 
-    return user;
+    
+    if (!user) throw new Error("User not found");
+    return new UserDTO(user);
   }
 
   async updateUser(id, data = {}) {
@@ -54,7 +58,7 @@ class UserService {
     if (affectedRows === 0) throw new Error("User not found or no changes made");
 
     const updatedUser = await this.getUserById(id);
-    return updatedUser;
+    return new UserDTO(updatedUser);;
   }
 
   async deleteUser(id) {

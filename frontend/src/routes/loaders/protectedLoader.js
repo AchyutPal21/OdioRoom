@@ -1,19 +1,20 @@
 import { redirect } from "react-router";
 import { getToken } from "../../../utils/auth";
-import apiClient from "../../../api/client";
+import { useSelector } from "react-redux";
+
 
 export async function protectedLoader() {
-  const token = getToken();
+  const {isAuthenticated, user} = useSelector((state) => state.auth);
 
-  if (!token) {
+  if (!isAuthenticated) {
     // No token? Redirect before the route renders.
     throw redirect("/");
   }
 
-  const user = { username: "johndoe@3", profilePicture: "profileimage.com/user1" };
-  const hasProfileDetails = user.username && user.profilePicture;
+  // const user = { username: "johndoe@3", profilePicture: "profileimage.com/user1" };
+  // const hasProfileDetails = user.username && user.profilePicture;
 
-  if (!hasProfileDetails) {
+  if (!user || !user.isActivated) {
     // Let them stay to complete details
     throw redirect("/activate");
 
